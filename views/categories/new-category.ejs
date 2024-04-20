@@ -1,0 +1,105 @@
+<%- include('../partials/categoryHeader')%>
+
+    <body>
+
+        <% if (successMessage&&successMessage.length>0) { %>
+            <div class="container">
+                <div class="alert alert-success" role="alert">
+                    <%= successMessage %>
+                </div>
+            </div>
+            <% } %>
+
+                <% if (errorMessage&&errorMessage.length>0) { %>
+                    <div class="container">
+                        <div class="alert alert-danger" role="alert">
+                            <%= errorMessage %>
+                        </div>
+                    </div>
+                    <% } %>
+
+
+                        <!-- views/categories/new.ejs -->
+                        <h2 class="text-center mb-4" style="color: rgb(226, 141, 36);">Add New Category</h2>
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-md-6">
+                                    <img src="/images/logo-no-background.svg" alt="Audio Booth"
+                                        class="img-fluid mb-4 mx-auto d-block">
+                                    <form action="" method="post" role="form" onsubmit="return validateForm()">
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">Category Name:</label>
+                                            <input type="text" class="form-control" id="name" name="name">
+                                            <span id="nameError" class="text-danger"></span><br>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="description" class="form-label">Description:</label>
+                                            <textarea class="form-control" id="description"
+                                                name="description"></textarea>
+                                            <span id="descriptionError" class="text-danger"></span><br>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Add Category</button>
+                                    </form>
+                                    <div class="p-2">
+                                        <a href="/admin/category" class="btn btn-primary">Back</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <script>
+                            function validateForm() {
+                                var nameInput = document.getElementById("name");
+                                var descriptionInput = document.getElementById("description");
+                                var name = nameInput.value.trim();
+                                var description = descriptionInput.value.trim();
+
+                                // Check if name is empty
+                                if (name === "") {
+                                    document.getElementById("nameError").innerHTML = "Name is required";
+                                    return false;
+                                }
+
+                                // Check if name starts with a blank space
+                                if (name.charAt(0) === " ") {
+                                    document.getElementById("nameError").innerHTML = "Name should not start with a blank space";
+                                    return false;
+                                }
+
+                                // Check if name is in capital letters
+                                if (name !== name.toUpperCase()) {
+                                    document.getElementById("nameError").innerHTML = "Name should be in capital letters";
+                                    return false;
+                                }
+                                // Check if name has minimum 5 letters
+                                if (name.length < 5 || name.length > 30) {
+                                    document.getElementById("nameError").innerHTML = "Name must be between 5 and 30 characters";
+                                    return false;
+                                }
+                                // Check if description is empty or has only blank spaces
+                                if (description === "" || description.trim().length === 0) {
+                                    document.getElementById("descriptionError").innerHTML = "Description is required";
+                                    return false;
+                                }
+
+                                // Check if description exceeds maximum length
+                                if (description.length > 70) {
+                                    document.getElementById("descriptionError").innerHTML = "Description must be maximum 70 characters";
+                                    return false;
+                                }
+
+
+                                // Clear any previous error messages
+                                document.getElementById("nameError").innerHTML = "";
+                                document.getElementById("descriptionError").innerHTML = "";
+
+                                // If all validations pass, return true to submit the form
+                                return true;
+                            }
+                        </script>
+
+
+    </body>
+
+    <%- include('../partials/categoryFooter')%>

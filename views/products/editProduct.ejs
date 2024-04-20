@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%=title%>
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        /* Add some basic styling for better appearance */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            /* padding: 100px; */
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        /* Thumbnail Image Styling */
+        .thumbnail {
+            width: 100px;
+            /* Set the width to your desired thumbnail size */
+            height: auto;
+            /* Maintain aspect ratio */
+            margin-right: 10px;
+            /* Add some space between images */
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 50px;
+            max-width: 700px;
+
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            /* position: fixed; */
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+            <h3 style="color: whitesmoke;" class="mb-4">Audio Booth</h3>
+        </nav>
+    </div>
+    <div class="container">
+        <h1>Edit Product</h1>
+        <% if (successMessage&&successMessage.length>0) { %>
+            <div class="container">
+                <div class="alert alert-success" role="alert">
+                    <%= successMessage %>
+                </div>
+            </div>
+            <% } %>
+
+                <% if (errorMessage&&errorMessage.length>0) { %>
+                    <div class="container">
+                        <div class="alert alert-danger" role="alert">
+                            <%= errorMessage %>
+                        </div>
+                    </div>
+                    <% } %>
+                        <div class="p-2">
+                            <a href="/admin/products" class="btn btn-primary">Back</a>
+                        </div>
+                        <!-- edit_product.ejs -->
+
+                        <form action="" method="POST" role="form" onsubmit="return validateForm()">
+                            <!-- Product Name -->
+                            <label for="name">Product Name:</label>
+                            <input type="text" id="name" name="name" value="<%=product.name %>" required maxlength="15">
+                            <span id="nameError" class="error"></span>
+
+                            <!-- Description -->
+                            <label for="description">Description:</label>
+                            <textarea id="description" name="description"
+                                maxlength="50"><%= product.description %></textarea>
+                            <span id="descriptionError" class="error"></span>
+
+                            <!-- Actual Price -->
+                            <label for="actualPrice">Actual Price:</label>
+                            <input type="number" id="actualPrice" name="actualPrice" value="<%= product.actualPrice %>"
+                                required  max="10000" onchange="updatePrice()">
+                            <span id="actualPriceError" class="error"></span>
+
+                            <!-- Discount -->
+                            <label for="discount">Discount:</label>
+                            <input type="number" id="discount" name="discount" value="<%= product.discount %>" min="0"
+                                max="5000" onchange="updatePrice()">
+                            <span id="discountError" class="error"></span>
+
+                            <!-- Price -->
+                            <label for="price">Price:</label>
+                            <input type="number" id="price" name="price" value="<%= product.price %>" required min="0"
+                                max="10000" readonly>
+                            <span id="priceError" class="error"></span>
+
+                            <!-- Stock Quantity -->
+                            <label for="stockQuantity">Stock Quantity:</label>
+                            <input type="number" id="stockQuantity" name="stockQuantity"
+                                value="<%= product.stockQuantity %>" min="=0" max="1000">
+                            <span id="stockQuantityError" class="error"></span>
+
+                            <!-- Brand -->
+                            <label for="brand">Brand:</label>
+                            <input type="text" id="brand" name="brand" value="<%= product.brand %>" maxlength="15">
+                            <span id="brandError" class="error"></span>
+
+                            <!-- Features -->
+                            <label for="features">Features:</label>
+                            <input type="text" id="features" name="features" value="<%= product.features.join(', ') %>"
+                                maxlength="30">
+                            <span id="featuresError" class="error"></span>
+
+
+
+                            <!-- Category -->
+                            <label for="category">Category:</label>
+                            <select id="category" name="category">
+                                <!-- Populate with categories from your database -->
+                                <% categories.forEach(category=> { %>
+                                    <option value="<%= category._id %>" <%=category._id.equals(product.category._id)
+                                        ? 'selected' : '' %>>
+                                        <%= category.name %>
+                                    </option>
+                                    <% }); %>
+                            </select>
+
+
+
+                            <button type="submit"> Update Product</button>
+                        </form>
+
+    </div>
+
+    <footer class="footer">
+        <div class="container-fluid">
+            <!-- Add footer content and links here -->
+            &copy; 2024 Audio Booth. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        function updatePrice() {
+            const actualPrice = parseInt(document.getElementById("actualPrice").value);
+            const discount = parseInt(document.getElementById("discount").value);
+            const priceField = document.getElementById("price");
+
+            if (!isNaN(actualPrice) && !isNaN(discount)) {
+                const discountedPrice = actualPrice - discount;
+                priceField.value = discountedPrice.toFixed(2); // Set the calculated price with 2 decimal places
+            }
+        }
+
+        function validateForm() {
+            let name = document.getElementById("name").value;
+            let description = document.getElementById("description").value;
+            let actualPrice = parseInt(document.getElementById("actualPrice").value);
+            let discount = parseInt(document.getElementById("discount").value);
+            let price = parseInt(document.getElementById("price").value);
+            let stockQuantity = parseInt(document.getElementById("stockQuantity").value);
+            let brand = document.getElementById("brand").value;
+            let features = document.getElementById("features").value
+
+            let isValid = true;
+            // validate name
+            if (name.trim() === "") {
+                document.getElementById("nameError").innerText = "Name is required";
+                isValid = false;
+            } else if (name.trim().length < 4) {
+                document.getElementById("nameError").innerText = "Name must contain at least four letters";
+                isValid = false;
+            } else {
+                document.getElementById("nameError").innerText = "";
+            }
+
+            // validate description
+            if (description.trim() === "") {
+                document.getElementById("descriptionError").innerText = "Description is required";
+                isValid = false;
+            } else {
+                document.getElementById("descriptionError").innerText = "";
+            }
+
+
+            if (isNaN(actualPrice) || actualPrice <= 0) {
+                document.getElementById("actualPriceError").innerText = "Actual Price must be greater than zero";
+                isValid = false;
+            } else {
+                document.getElementById("actualPriceError").innerText = "";
+            }
+
+            // Validate Discount
+            if (isNaN(discount) || discount < 0 || discount > (actualPrice * 0.5)) {
+                document.getElementById("discountError").innerText = "Discount must be between 0 and 50% of the Actual Price";
+                isValid = false;
+            } else {
+                document.getElementById("discountError").innerText = "";
+            }
+
+            if (isNaN(price) || price <= 0) {
+                document.getElementById("priceError").innerText = "Price must be greater than zero";
+                isValid = false;
+            } else {
+                document.getElementById("priceError").innerText = "";
+            }
+
+            if (isNaN(stockQuantity) || stockQuantity < 0 || stockQuantity > 100) {
+                document.getElementById("stockQuantityError").innerText = "Stock Quantity must be between 1 and 100";
+                isValid = false;
+            } else {
+                document.getElementById("stockQuantityError").innerText = "";
+            }
+
+            // brand validation
+            if (brand.trim() === "") {
+                document.getElementById("brandError").innerText = "Brand is required";
+                isValid = false;
+            } else {
+                document.getElementById("brandError").innerText = "";
+            }
+            // feature validation
+            if (features.trim() === "") {
+                document.getElementById("featuresError").innerText = "Feature is required";
+                isValid = false;
+            } else {
+                document.getElementById("featuresError").innerText = "";
+            }
+
+            return isValid;
+        }
+
+    </script>
+
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+
+</html>

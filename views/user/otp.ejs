@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+
+    <!-- bootstrap 5 stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css"
+        integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- fontawesome 6 stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+        integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+    <style>
+        body {
+            background-color: #ebecf0;
+        }
+
+        .otp-letter-input {
+            max-width: 100%;
+            height: 90px;
+            border: 1px solid #198754;
+            border-radius: 10px;
+            color: #198754;
+            font-size: 60px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .btn {
+            height: 50px;
+        }
+
+        .messagebox {
+            position: fixed;
+            top: 15%;
+            left: 47%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            /* Adjust width as needed */
+            background-color: #f8d7da;
+            /* Adjust background color */
+            border: 1px solid #f5c6cb;
+            /* Adjust border color */
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            /* z-index: 9999; */
+        }
+
+        .flash-message {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <% if (message && message.length> 0) { %>
+        <div class="messagebox flash-message alert alert-danger ">
+            <%= message %>
+        </div>
+        <% } %>
+
+
+
+
+            <div class="container p-5">
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-5 mt-5">
+                        <form id="otpForm" action="/verify" method="POST">
+                            <div class="bg-white p-5 rounded-3 shadow-sm border">
+                                <div>
+                                    <p class="text-center text-success" style="font-size: 5.5rem;"><i
+                                            class="fa-solid fa-envelope-circle-check"></i></p>
+                                    <p class="text-center text-center h5 ">Please check your email</p>
+                                    <p class="text-muted text-center">We've sent a code to
+                                    </p>
+
+                                    <div class="row pt-4 pb-2">
+                                        <div class="col-3">
+                                            <input id="otp1" class="otp-letter-input" type="text" name="otp1"
+                                                maxlength="1" oninput="moveToNext(this, 'otp2')">
+                                        </div>
+                                        <div class="col-3">
+                                            <input id="otp2" class="otp-letter-input" type="text" name="otp2"
+                                                maxlength="1" oninput="moveToNext(this, 'otp3')">
+                                        </div>
+                                        <div class="col-3">
+                                            <input id="otp3" class="otp-letter-input" type="text" name="otp3"
+                                                maxlength="1" oninput="moveToNext(this, 'otp4')">
+                                        </div>
+                                        <div class="col-3">
+                                            <input id="otp4" class="otp-letter-input" type="text" name="otp4"
+                                                maxlength="1">
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row pt-5">
+                                        <div class="col-6">
+                                            <button id="resendBtn" class="btn btn-outline-secondary w-100">Resend
+                                                Otp</button>
+                                        </div>
+                                        <div class="col-6">
+                                            <button type="submit" id="verifyBtn"
+                                                class="btn btn-success w-100">Verify</button>
+                                        </div>
+                                        <div>
+                                            <p id="countdown"></p>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+            <script>
+                function moveToNext(currentInput, nextInputId) {
+                    if (currentInput.value.length === 1) {
+                        document.getElementById(nextInputId).focus();
+                    }
+                }
+
+
+                // Function to calculate countdown end time
+                function calculateCountdownEndTime() {
+                    const now = new Date().getTime();
+                    const countdownDuration = 60000; // Assuming OTP expires in 60 seconds
+                    return now + countdownDuration;
+                }
+
+
+                let countdown;
+
+                // Update the countdown every 1 second
+                function updateCountdown() {
+
+                    // Calculate the initial countdown end time
+                    const countdownEndTime = calculateCountdownEndTime();
+                    countdown = setInterval(function () {
+                        // Get current time
+                        const now = new Date().getTime();
+                        // Calculate the remaining time
+                        const distance = countdownEndTime - now;
+                        // Calculate minutes and seconds
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                        // Display the countdown
+                        document.getElementById('countdown').innerHTML = `Resend OTP in ${minutes}m ${seconds}s`;
+                        // If the countdown is over, display a message and clear the countdown interval
+                        if (distance < 0) {
+                            clearInterval(countdown);
+                            document.getElementById('countdown').innerHTML = 'Resend OTP is available now';
+                        }
+                    }, 1000);
+                }
+                // Start the initial countdown
+                updateCountdown();
+
+                // Handle click event for resend button
+                document.getElementById('resendBtn').addEventListener('click', function (event) {
+
+
+
+                    event.preventDefault();
+                    fetch('/resend-otp', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({}),
+                    })
+                        .then((response) => response.json())
+                        .then((data) => {
+                            // Display success or error message
+                            alert(data.msg);
+                            if (data.success) {
+
+                                clearInterval(countdown); // Clear the previous interval
+                                updateCountdown();
+
+                            }
+                        })
+                        .catch((error) => {
+
+
+                        });
+                });
+
+            </script>
+</body>
+
+
+
+</html>

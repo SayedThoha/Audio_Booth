@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%=title%>
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #FFBE98;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #343a40;
+        }
+
+        .address-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .address-form label {
+            font-weight: bold;
+        }
+
+        /* Hide the address form initially */
+        #addressFormContainer {
+            display: none;
+        }
+
+        .error-message {
+            font-size: 0.9rem;
+            margin-top: 5px;
+            color: #dc3545;
+        }
+
+        .btn-group .btn {
+            margin-right: 5px;
+        }
+
+        .list-group-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-group-item .btn-group {
+            margin-left: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="mt-3 mb-4">Address Management</h1>
+        <!-- Display flash message -->
+
+        <% if (message && message.length> 0) { %>
+            <div class="flash-message alert alert-primary ">
+                <%= message %>
+            </div>
+            <% } %>
+                <div class="p-2">
+                    <a href="/cart/checkout" class="btn btn-primary">Back</a>
+                </div>
+
+                <!-- Address Form -->
+                <div id="addressFormContainer">
+                    <form action="/profile/address" method="post" class="address-form" role="form">
+                        <input type="hidden" id="addressId" name="addressId">
+                        <!-- Hidden input for storing address ID when editing -->
+
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Address Type:</label>
+                            <select id="type" name="type" class="form-select" required>
+                                <option value="" disabled selected>Select address type</option>
+                                <option value="Home">Home</option>
+                                <option value="Office">Office</option>
+                            </select>
+
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label for="street" class="form-label">Street:</label>
+                            <input type="text" id="street" name="street" class="form-control" required>
+
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="city" class="form-label">City:</label>
+                            <input type="text" id="city" name="city" class="form-control" required>
+
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="state" class="form-label">State:</label>
+                            <input type="text" id="state" name="state" class="form-control" required>
+
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="postalCode" class="form-label">Postal Code:</label>
+                            <input type="text" id="postalCode" name="postalCode" class="form-control" required>
+
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save Address</button>
+                    </form>
+                </div>
+
+                <hr class="mt-3">
+
+
+                <!-- Address List -->
+                <h2 class="mt-4 mb-3">Your Addresses</h2>
+                <div id="addressList">
+                    <!-- Home Addresses -->
+                    <h3>Home Addresses</h3>
+                    <% const homeAddresses=addresses.filter(address=> address.type === 'Home'); %>
+                        <% if (homeAddresses.length> 0) { %>
+                            <ul class="list-group">
+                                <% homeAddresses.forEach(function(address) { %>
+                                    <li class="list-group-item">
+                                        <strong>
+                                            <%= address.type %>:
+                                        </strong>
+                                        <%= address.street %>, <%= address.city %>, <%= address.state %>, <%=
+                                                        address.postalCode %>
+                                                        <!-- Edit and Delete buttons -->
+                                                        <div class="btn-group ms-2" role="group"
+                                                            aria-label="Address actions">
+                                                            <!-- Edit button -->
+                                                            <button class="btn btn-sm btn-outline-primary"
+                                                                onclick="editAddress('<%= address._id %>','<%= JSON.stringify(addresses) %>')">Edit</button>
+                                                            <!-- Delete button -->
+                                                            <button class="btn btn-sm btn-outline-danger"
+                                                                onclick="deleteAddress('<%= address._id %>')">Delete</button>
+                                                        </div>
+                                    </li>
+                                    <% }); %>
+                            </ul>
+                            <% } else { %>
+                                <p>No home addresses found.</p>
+                                <% } %>
+
+                                    <!-- Office Addresses -->
+                                    <h3>Office Addresses</h3>
+                                    <% const officeAddresses=addresses.filter(address=> address.type === 'Office'); %>
+                                        <% if (officeAddresses.length> 0) { %>
+                                            <ul class="list-group">
+                                                <% officeAddresses.forEach(function(address) { %>
+                                                    <li class="list-group-item">
+                                                        <strong>
+                                                            <%= address.type %>:
+                                                        </strong>
+                                                        <%= address.street %>, <%= address.city %>, <%= address.state %>
+                                                                    , <%= address.postalCode %>
+                                                                        <!-- Edit and Delete buttons -->
+                                                                        <div class="btn-group ms-2" role="group"
+                                                                            aria-label="Address actions">
+                                                                            <!-- Edit button -->
+                                                                            <button
+                                                                                class="btn btn-sm btn-outline-primary"
+                                                                                onclick="editAddress('<%= address._id %>','<%= JSON.stringify(addresses) %>')">Edit</button>
+                                                                            <!-- Delete button -->
+                                                                            <button
+                                                                                class="btn btn-sm btn-outline-danger"
+                                                                                onclick="deleteAddress('<%= address._id %>')">Delete</button>
+                                                                        </div>
+                                                    </li>
+                                                    <% }); %>
+                                            </ul>
+                                            <% } else { %>
+                                                <p>No office addresses found.</p>
+                                                <% } %>
+                </div>
+
+    </div>
+
+
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('.address-form');
+            const addressFormContainer = document.getElementById('addressFormContainer');
+            // Check if no addresses are listed or if only one address is listed
+            const addressItems = document.querySelectorAll('.list-group-item');
+            // Check if two addresses are listed
+            if (addressItems.length === 0 || addressItems.length === 1) {
+                addressFormContainer.style.display = 'block'; // Display the address form
+            }
+
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent form submission
+
+                // Remove existing error messages
+                removeErrorMessages();
+
+                // Fetch form inputs
+                const type = document.getElementById('type').value.trim();
+                const street = document.getElementById('street').value.trim();
+                const city = document.getElementById('city').value.trim();
+                const state = document.getElementById('state').value.trim();
+                const postalCode = document.getElementById('postalCode').value.trim();
+
+                // Client-side validation
+                let isValid = true;
+
+                if (!type) {
+                    displayError('type', 'Please select an address type');
+                    isValid = false;
+                }
+
+                if (!['Home', 'Office'].includes(type)) {
+                    displayError('type', 'Invalid address type');
+                    isValid = false;
+                }
+
+                if (street.length === 0 || /^\s/.test(street) || street.length > 100) {
+                    displayError('street', 'Please enter a valid street address (between 1 and 100 characters)');
+                    isValid = false;
+                }
+
+                if (city.length === 0 || /^\s/.test(city) || city.length > 50) {
+                    displayError('city', 'Please enter a valid city (between 1 and 50 characters)');
+                    isValid = false;
+                }
+
+                if (state.length === 0 || /^\s/.test(state) || state.length > 50) {
+                    displayError('state', 'Please enter a valid state (between 1 and 50 characters)');
+                    isValid = false;
+                }
+
+                if (postalCode.length === 0 || /^\s/.test(postalCode) || postalCode.length !== 6 || !/^\d{6}$/.test(postalCode)) {
+                    displayError('postalCode', 'Please enter a valid 6-digit postal code.');
+                    isValid = false;
+                }
+
+
+                // If all validations pass, submit the form
+                if (isValid) {
+                    form.submit();
+                }
+            });
+
+            // Function to display error messages
+            function displayError(fieldId, errorMessage) {
+                const field = document.getElementById(fieldId);
+                const errorElement = document.createElement('div');
+                errorElement.classList.add('text-danger');
+                errorElement.classList.add('error-message');
+                errorElement.textContent = errorMessage;
+                field.parentNode.appendChild(errorElement);
+            }
+
+            // Function to remove existing error messages
+            function removeErrorMessages() {
+                const errorElements = document.querySelectorAll('.error-message');
+                errorElements.forEach(element => element.remove());
+            }
+        });
+        // Function to populate form fields with address details for editing
+        function editAddress(addressId, addressesJSON) {
+            const addresses = JSON.parse(addressesJSON); // Parse JSON string back to object
+            const address = addresses.find(a => a._id === addressId);
+            if (address) {
+                // Display the address form
+                document.getElementById('addressFormContainer').style.display = 'block';
+                document.getElementById('addressId').value = addressId;
+                document.getElementById('type').value = address.type;
+                document.getElementById('street').value = address.street;
+                document.getElementById('city').value = address.city;
+                document.getElementById('state').value = address.state;
+                document.getElementById('postalCode').value = address.postalCode;
+            }
+        }
+
+        // Function to delete an address
+        function deleteAddress(addressId) {
+            if (confirm('Are you sure you want to delete this address?')) {
+                fetch(`/profile/address/${addressId}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            // Reload the page after successful deletion
+                            location.reload();
+                        } else {
+                            console.error('Failed to delete address:', response.statusText);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting address:', error);
+                    });
+            }
+        }
+
+    </script>
+
+
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
+</html>

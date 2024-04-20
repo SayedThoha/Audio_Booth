@@ -1,0 +1,29 @@
+<%- include('../partials/adminHeader')%>
+
+
+    <h1 style="color: blue;">Edit User</h1>
+
+    <form action="" method="post" role="form">
+
+        <!-- Your form fields for editing user details -->
+        <label for="name">Name:</label>
+
+        <input type="name" name="name" value="<%= user.name%>" required>
+        <br>
+        <br>
+
+        <label for="email">Email:</label>
+
+        <input type="email" name="email" value="<%= user.email%>" required>
+        <br>
+        <br>
+        <input type="hidden" name="id" value="<%= user._id %>">
+        <input type="submit" value="Update user">
+
+
+    </form>
+    <br>
+    <br>
+    <a href="/admin/customers">Go to Dashboard</a>
+
+    <%- include('../partials/adminFooter')%>

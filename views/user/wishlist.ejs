@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%=title%>
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 120px;
+        }
+
+        header {
+            background-color: #343a40;
+            color: #fff;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+
+        .wishlist-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .wishlist-item {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .wishlist-item h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .wishlist-item p {
+            margin: 10px 0;
+            color: #666;
+        }
+
+        .wishlist-item form {
+            margin-top: 10px;
+        }
+
+        .wishlist-item form button {
+            padding: 8px 16px;
+            background-color: #ff6b6b;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .wishlist-item form button:hover {
+            background-color: #ff4f4f;
+        }
+
+        .empty-wishlist {
+            color: #666;
+        }
+
+        .thumbnail-image {
+            width: 100px;
+            /* Adjust the width as needed */
+            height: auto;
+            /* Maintain aspect ratio */
+            border-radius: 8px;
+            /* Optional: Add border radius */
+            margin-right: 10px;
+            /* Optional: Add spacing between image and text */
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        .add-to-cart-btn {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <%= title %>
+            </div>
+            <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+                <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                    <div class="container-fluid">
+                        <a class="navbar-brand" href="/home">Audio Booth</a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                            <div class="navbar-nav">
+                                <a class="nav-link active" aria-current="page" href="/profile">Profile</a>
+                                <a class="nav-link" href="/cart">Cart</a>
+                            
+
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </nav>
+        </div>
+    </header>
+    <div class="wishlist-container">
+        <div class="p-2">
+            <a href="/home" class="btn btn-primary">Back</a>
+        </div>
+        <% if (wishlist && wishlist.length> 0) { %>
+            <% wishlist.forEach(item=> { %>
+                <div class="wishlist-item">
+                    <img src="<%= item.product.images[0].url %>" alt="<%= item.product.name %>" class="thumbnail-image">
+                    <div>
+                        <h2>
+                            <%= item.product.name %>
+                        </h2>
+                        <p>Description: <%= item.product.description %>
+                        </p>
+                        <p>Price: <%= item.product.price %>
+                        </p>
+                        <!-- Add other product details as needed -->
+                        <form action="/wishlist/remove" method="post">
+                            <input type="hidden" name="productId" value="<%= item.product._id %>">
+                            <button type="submit">Remove Item</button>
+                        </form>
+                        <div class="p-2">
+                        <button class="add-to-cart-btn " data-product-id="<%= item.product._id %>">Add to
+                            Cart</button>
+                        </div>
+                    </div>
+                </div>
+                <% }); %>
+                    <% } else { %>
+                        <p class="empty-wishlist">Your wishlist is empty</p>
+                        <% } %>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <!-- Add footer content and links here -->
+            &copy; 2024 Audio Booth. All rights reserved.
+        </div>
+    </footer>
+
+
+    <script>
+        // Function to handle form submission for removing items from the wishlist
+        const handleRemoveFromWishlist = async (productId) => {
+            try {
+                const response = await fetch('/wishlist/remove', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ productId })
+                });
+
+                if (response.ok) {
+                    // Item removed successfully, reload the wishlist
+                    window.location.reload();
+                } else {
+                    // Error occurred
+                    console.error('Error removing item from wishlist:', response.statusText);
+                    // Display error message to the user
+                    alert('Error removing item from wishlist. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error removing item from wishlist:', error);
+                // Display error message to the user
+                alert('Error removing item from wishlist. Please try again.');
+            }
+        };
+
+
+        // Function to handle adding items to the cart
+        const handleAddToCart = async (productId) => {
+            const quantity = 1;
+            try {
+
+                // Remove item from wishlist
+                await handleRemoveFromWishlist(productId);
+                const response = await fetch('/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ productId, quantity })
+                });
+
+                if (response.ok) {
+                    // Item added to cart successfully
+                    alert('Item added to cart successfully.');
+                } else {
+                    // Error occurred
+                    console.error('Error adding item to cart:', response.statusText);
+                    // Display error message to the user
+                    alert('Error adding item to cart. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error adding item to cart:', error);
+                // Display error message to the user
+                alert('Error adding item to cart. Please try again.');
+            }
+        };
+
+        // Add event listener to all "Add to Cart" buttons
+        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const productId = button.dataset.productId;
+                handleAddToCart(productId);
+            });
+        });
+
+
+        // Add event listener to all remove buttons
+        document.querySelectorAll('.remove-from-wishlist-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const productId = button.dataset.productId;
+                handleRemoveFromWishlist(productId);
+            });
+        });
+    </script>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
+</html>

@@ -1,0 +1,12 @@
+const mongoose = require('mongoose');
+
+const connect = mongoose.connect(process.env.atlasUri)
+
+connect.then(() => {
+    console.log("database connected")
+})
+    .catch(() => {
+        console.log("database not connected")
+    })
+
+module.exports = connect;

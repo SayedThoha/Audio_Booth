@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%=title%>
+
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .coupon-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        padding: 20px;
+    }
+
+    .coupon-code {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .coupon-details {
+        color: #6c757d;
+        margin-bottom: 5px;
+    }
+
+    .copy-btn {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .copy-btn:hover {
+        background-color: #0056b3;
+    }
+
+    .footer {
+        background-color: #343a40;
+        color: #fff;
+        text-align: center;
+        padding: 20px 0;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+</style>
+
+<body>
+    <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/home">Audio Booth</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link active" aria-current="page" href="/home">Home</a>
+                    <a class="nav-link" href="/profile">Profile</a>
+
+
+                </div>
+            </div>
+        </div>
+
+    </nav>
+    <div class="container">
+        <h1 class="mb-4">Coupons</h1>
+        <div class="p-2">
+            <a href="/profile" class="btn btn-primary">Back</a>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <% coupons.forEach(coupon=> { %>
+                    <div class="coupon-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="coupon-code">
+                                    <%= coupon.code %>
+                                </div>
+                                <div class="coupon-details">Discount: <% if (coupon.discountType==='percentage' ) { %>
+                                        <%= coupon.discountPercentage %> %
+                                            <% } else if (coupon.discountType==='fixed' ) { %>
+                                                ₹ <%= coupon.discountAmount %>
+                                                    <% } %>
+                                </div>
+                                <div class="coupon-details">Minimum purchase amount: <%=coupon. minimumPurchaseAmount %>
+                                </div>
+                                <div class="coupon-details">
+                                    <% if (coupon.maximumDiscountAmount !==undefined && coupon.maximumDiscountAmount
+                                        !==null) { %>
+                                  Maximum Discount ₹ :<%= coupon.maximumDiscountAmount %>
+                                            <% } else { %>
+                                                Maximum Discount ₹ <%= coupon.discountAmount %>
+                                                <% } %>
+                                </div>
+                                <div class="coupon-details">Expires on: <%=
+                                        coupon.expirationDate.toLocaleDateString('en-IN') %>
+                                </div>
+                                
+                            </div>
+                            <button class="copy-btn" data-coupon="<%= coupon.code %>">Copy</button>
+                        </div>
+                    </div>
+                    <% }) %>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container-fluid">
+            <!-- Add footer content and links here -->
+            &copy; 2024 Audio Booth. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const couponCode = button.getAttribute('data-coupon');
+                navigator.clipboard.writeText(couponCode)
+                    .then(() => alert('Coupon code copied to clipboard: ' + couponCode))
+                    .catch(err => console.error('Failed to copy coupon code: ', err));
+            });
+        });
+    </script>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
+</html>

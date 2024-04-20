@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%=title%>
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding-bottom: 100px;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 50px;
+            max-width: 700px;
+
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            /* position: fixed; */
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        #imagePreview {
+            max-width: 100%;
+            display: none;
+        }
+
+        #selectedImagesContainer img {
+            max-width: 100px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+            <h3 style="color: whitesmoke;" class="mb-4">Audio Booth</h3>
+        </nav>
+    </div>
+    <% if (successMessage&&successMessage.length>0) { %>
+        <div class="container-fluid">
+            <div class="alert alert-success" role="alert">
+                <%= successMessage %>
+            </div>
+        </div>
+        <% } %>
+
+            <% if (errorMessage&&errorMessage.length>0) { %>
+                <div class="container-fluid">
+                    <div class="alert alert-danger" role="alert">
+                        <%= errorMessage %>
+                    </div>
+                </div>
+                <% } %>
+                    <div class="container">
+
+                        <h1>Add New Product</h1>
+                        <div class="p-2">
+                            <a href="/admin/products" class="btn btn-primary">Back</a>
+                        </div>
+                        <form action="" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+                            <!-- Product Name -->
+                            <label for="name">Product Name:</label>
+                            <input type="text" id="name" name="name" required maxlength="15">
+                            <span id="nameError" class="error"></span>
+
+                            <!-- Description -->
+                            <label for="description">Description:</label>
+                            <textarea id="description" name="description" maxlength="50"></textarea>
+                            <span id="descriptionError" class="error"></span>
+
+                            <!-- Actual Price -->
+                            <label for="actualPrice">Actual Price:</label>
+                            <input type="number" id="actualPrice" name="actualPrice" required max="10000"
+                                onchange="updatePrice()">
+                            <span id="actualPriceError" class="error"></span>
+
+                            <!-- Discount -->
+                            <label for="discount">Discount:</label>
+                            <input type="number" id="discount" name="discount" value="0" min="0" max="5000"
+                                onchange="updatePrice()">
+                            <span id="discountError" class="error"></span>
+
+                            <!-- Price -->
+                            <label for="price">Price:</label>
+                            <input type="number" id="price" name="price" required min="0" max="10000" readonly>
+                            <span id="priceError" class="error"></span>
+
+                            <!-- Stock Quantity -->
+                            <label for="stockQuantity">Stock Quantity:</label>
+                            <input type="number" id="stockQuantity" name="stockQuantity" value="0" max="2000">
+                            <span id="stockQuantityError" class="error"></span>
+
+                            <!-- Brand -->
+                            <label for="brand">Brand:</label>
+                            <input type="text" id="brand" name="brand" required maxlength="15">
+                            <span id="brandError" class="error"></span>
+
+                            <!-- Features -->
+                            <label for="features">Features:</label>
+                            <input type="text" id="features" name="features" required maxlength="30">
+                            <span id="featuresError" class="error"></span>
+
+
+
+                            <!-- Category -->
+                            <label for="category">Category:</label>
+                            <select id="category" name="category">
+                                <!-- Populate with categories from your database -->
+                                <% categories.forEach(category=> { %>
+                                    <option value="<%= category._id %>">
+                                        <%= category.name %>
+                                    </option>
+                                    <% }); %>
+                            </select>
+
+                            <!-- Images -->
+
+                            <label for="images">Images:</label>
+                            <input type="file" id="images" name="images" multiple accept="image/*">
+
+                            <div id="selectedImagesContainer"></div>
+                            <span id="imageError" class="error"></span>
+
+                            <button type="submit">Add Product</button>
+                        </form>
+
+                    </div>
+
+                    <!-- Footer -->
+                    <footer class="footer">
+                        <div class="container-fluid">
+                            <p>&copy; Audio Booth. All rights reserved.</p>
+                        </div>
+                    </footer>
+
+
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const imageInput = document.getElementById('images');
+                            const selectedImagesContainer = document.getElementById('selectedImagesContainer');
+                            const imageError = document.getElementById('imageError');
+
+                            let selectedFiles = [];
+
+                            imageInput.addEventListener('change', function () {
+                                const files = Array.from(imageInput.files);
+
+                                // Clear previous previews
+                                selectedImagesContainer.innerHTML = '';
+                                selectedFiles = []
+
+                                files.forEach(file => {
+                                    const reader = new FileReader();
+                                    reader.onload = function (e) {
+                                        const imageContainer = document.createElement('div');
+                                        imageContainer.classList.add('image-container');
+
+                                        const imgElement = document.createElement('img');
+                                        imgElement.src = e.target.result;
+                                        imgElement.classList.add('preview-image');
+                                        imageContainer.appendChild(imgElement);
+
+                                        const deleteButton = document.createElement('button');
+                                        deleteButton.textContent = 'Delete';
+                                        deleteButton.classList.add('delete-button', 'btn', 'btn-danger');
+
+                                        // Event listener to remove the image container and corresponding file from selectedFiles
+                                        deleteButton.addEventListener('click', function () {
+                                            selectedImagesContainer.removeChild(imageContainer);
+
+                                            // Find the index of the file in selectedFiles array
+                                            const indexToRemove = selectedFiles.indexOf(file);
+                                            if (indexToRemove !== -1) {
+                                                selectedFiles.splice(indexToRemove, 1); // Remove the file at the found index
+                                                updateImageError();
+                                            }
+                                        });
+
+                                        imageContainer.appendChild(deleteButton);
+                                        selectedImagesContainer.appendChild(imageContainer);
+
+                                        // Add the file to selectedFiles array
+                                        selectedFiles.push(file);
+                                        updateImageError();
+                                    };
+
+                                    reader.readAsDataURL(file);
+                                });
+                            });
+
+                            const updateImageError = () => {
+                                if (selectedFiles.length === 3) {
+                                    imageError.textContent = ''; // Clear any previous error message
+                                } else {
+                                    imageError.textContent = 'Please upload exactly 3 images';
+                                }
+                            };
+
+                            const form = document.querySelector('form');
+                            if (form) {
+                                form.addEventListener('submit', function (event) {
+                                    // Ensure that exactly 3 images are selected before form submission
+                                    if (selectedFiles.length !== 3) {
+                                        imageError.textContent = 'Please upload exactly 3 images';
+                                        event.preventDefault(); // Prevent form submission if images count is not valid
+                                    }
+                                });
+                            }
+                        });
+
+
+                        // Function to initialize Cropper for an image
+                        function initializeCropper(imageElement) {
+                            return new Cropper(imageElement, {
+                                aspectRatio: 16 / 9,
+                                viewMode: 1,
+                                dragMode: 'move',
+                                responsive: true,
+                                autoCropArea: 1,
+                                crop: function (event) {
+                                    console.log('Crop event:', event.detail);
+                                },
+                            });
+                        }
+
+
+                        function updatePrice() {
+                            const actualPrice = parseInt(document.getElementById("actualPrice").value);
+                            const discount = parseInt(document.getElementById("discount").value);
+                            const priceField = document.getElementById("price");
+
+                            if (!isNaN(actualPrice) && !isNaN(discount)) {
+                                const discountedPrice = actualPrice - discount;
+                                priceField.value = discountedPrice.toFixed(2); // Set the calculated price with 2 decimal places
+                            }
+                        }
+
+                        function validateForm() {
+                            let name = document.getElementById("name").value;
+                            let description = document.getElementById("description").value;
+                            let actualPrice = parseInt(document.getElementById("actualPrice").value);
+                            let discount = parseInt(document.getElementById("discount").value);
+                            let price = parseInt(document.getElementById("price").value);
+                            let stockQuantity = parseInt(document.getElementById("stockQuantity").value);
+                            let brand = document.getElementById("brand").value;
+                            let features = document.getElementById("features").value
+
+                            let isValid = true;
+                            // validate name
+                            if (name.trim() === "") {
+                                document.getElementById("nameError").innerText = "Name is required";
+                                isValid = false;
+                            } else if (name.trim().length < 4) {
+                                document.getElementById("nameError").innerText = "Name must contain at least four letters";
+                                isValid = false;
+                            } else {
+                                document.getElementById("nameError").innerText = "";
+                            }
+
+                            // validate description
+                            if (description.trim() === "") {
+                                document.getElementById("descriptionError").innerText = "Description is required";
+                                isValid = false;
+                            } else {
+                                document.getElementById("descriptionError").innerText = "";
+                            }
+
+
+                            if (isNaN(actualPrice) || actualPrice <= 0) {
+                                document.getElementById("actualPriceError").innerText = "Actual Price must be greater than zero";
+                                isValid = false;
+                            } else {
+                                document.getElementById("actualPriceError").innerText = "";
+                            }
+
+                            // Validate Discount
+                            if (isNaN(discount) || discount < 0 || discount > (actualPrice * 0.5)) {
+                                document.getElementById("discountError").innerText = "Discount must be between 0 and 50% of the Actual Price";
+                                isValid = false;
+                            } else {
+                                document.getElementById("discountError").innerText = "";
+                            }
+
+                            if (isNaN(price) || price <= 0) {
+                                document.getElementById("priceError").innerText = "Price must be greater than zero";
+                                isValid = false;
+                            } else {
+                                document.getElementById("priceError").innerText = "";
+                            }
+
+                            if (isNaN(stockQuantity) || stockQuantity < 0 || stockQuantity > 100) {
+                                document.getElementById("stockQuantityError").innerText = "Stock Quantity must be between 1 and 100";
+                                isValid = false;
+                            } else {
+                                document.getElementById("stockQuantityError").innerText = "";
+                            }
+
+                            // brand validation
+                            if (brand.trim() === "") {
+                                document.getElementById("brandError").innerText = "Brand is required";
+                                isValid = false;
+                            } else {
+                                document.getElementById("brandError").innerText = "";
+                            }
+                            // feature validation
+                            if (features.trim() === "") {
+                                document.getElementById("featuresError").innerText = "Feature is required";
+                                isValid = false;
+                            } else {
+                                document.getElementById("featuresError").innerText = "";
+                            }
+
+                            return isValid;
+                        }
+                    </script>
+
+
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+
+</html>

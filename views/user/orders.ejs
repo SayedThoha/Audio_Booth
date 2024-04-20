@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%=title%>
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #495057;
+            margin: 0;
+            padding: 0;
+        }
+
+        .product-thumbnail {
+            width: 100px;
+            /* Adjust as needed */
+            height: auto;
+        }
+
+        .order-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .order-card .card-body {
+            padding: 20px;
+        }
+
+        .order-card .card-title {
+            margin-bottom: 10px;
+            font-size: 20px;
+            color: #343a40;
+        }
+
+        .reason-select {
+            margin-bottom: 10px;
+        }
+
+        .cancel-btn {
+            margin-top: 10px;
+        }
+
+        .container-fixed-width {
+            max-width: 700px;
+            /* Adjust as needed */
+            margin: 0 auto;
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            /* position: fixed; */
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin-bottom: 30px;
+            font-size: 20px;
+            border-bottom: 2px solid #343a40;
+        }
+
+        .breadcrumb-item+.breadcrumb-item::before {
+            content: ">";
+            padding: 0 5px;
+            color: #777;
+        }
+
+        .breadcrumb-item a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-item a:hover {
+            color: #0056b3;
+        }
+
+        .breadcrumb-item.active {
+            color: #343a40;
+        }
+
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            /* Center horizontally */
+            margin-top: 20px;
+            /* Adjust top margin as needed */
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- Views (user/order.ejs) -->
+    <div class="container-fluid">
+        <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+            <h3 style="color: whitesmoke;" class="mb-4">Order History</h3>
+        </nav>
+    </div>
+    <div class="container mt-5">
+
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/profile">Profile</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Order History</li>
+            </ol>
+        </nav>
+
+        <div class="p-2">
+            <a href="/profile" class="btn btn-primary">Back</a>
+        </div>
+
+        <% if (orders.length===0) { %>
+            <p class="text-muted">No orders found.</p>
+            <% } else { %>
+                <% orders.forEach(order=> { %>
+                    <div class="container-fixed-width">
+                        <div class="card order-card">
+                            <div class="card-body">
+
+                                <h5 class="card-title mb-3">Order ID: <%= order.orderId %>
+                                </h5>
+                                <p style="color: coral;" class="card-text mb-2">Status:
+                                    <% if (order.returnRequested && !order.returnApproved) { %>
+                                        <span class="badge bg-info">Return Requested</span>
+                                        <% } else { %>
+                                            <%= order.status %>
+                                                <% } %>
+                                </p>
+                                <p class="card-text mb-2">Purchase Date: <%= order.createdAt.toLocaleDateString('en-IN')
+                                        %>
+                                </p>
+                                <p class="card-text mb-2">Payment Method: <%= order.paymentMethod %>
+                                </p>
+                                <p class="fw-bold mt-3">Delivered Address: <%= order.address.type%>,<%=order.address.
+                                            street%>,<%=order.address. city%>,<%=order.address. state%>,
+                                                    <%=order.address. postalCode %>
+                                </p>
+                                <!-- Display other order details -->
+                                <ul class="list-group list-group-flush">
+                                    <% order.items.forEach(item=> { %>
+                                        <li class="list-group-item">
+                                            <div class="d-flex align-items-center">
+                                                <img src="<%= item.product.images[0].url %>"
+                                                    alt="<%= item.product.name %>" class="product-thumbnail me-3">
+                                                <div>
+                                                    <span class="fw-bold">
+                                                        <%= item.product.name %>
+                                                    </span> - Quantity: <%= item.quantity %>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <% }); %>
+                                            <p>Actual Amount: <%= order.totalActualAmount %>
+                                            </p>
+                                            <% if (order.coupon) { %>
+                                                <p class="text-muted mb-2">Coupon Used: <%= order.coupon.code %>
+                                                </p>
+                                                <% if (order.coupon.discountType==='percentage' ) { %>
+                                                    <!-- Calculate percentage discount -->
+                                                    <% var couponDiscount=(order.totalAmount *
+                                                        order.coupon.discountPercentage / 100).toFixed(0); %>
+                                                        <p class="text-muted mb-2">Coupon Discount: <%= couponDiscount
+                                                                %>
+                                                        </p>
+                                                        <% } else if (order.coupon.discountType==='fixed' ) { %>
+                                                            <!-- Use fixed amount discount -->
+                                                            <% var
+                                                                couponDiscount=order.coupon.discountAmount.toFixed(0);
+                                                                %>
+                                                                <p class="text-muted mb-2">Coupon Discount: <%=
+                                                                        couponDiscount %>
+                                                                </p>
+                                                                <% } %>
+                                                                    <% } else { %>
+                                                                        <!-- No coupon used -->
+                                                                        <p class="text-muted mb-2">Coupon Discount: 0
+                                                                        </p>
+                                                                        <% } %>
+
+                                                                            <!-- Calculate and display total discount -->
+                                                                            <% var
+                                                                                actualDifference=order.totalActualAmount
+                                                                                - order.totalAmount; %>
+                                                                                <% var totalDiscount=actualDifference -
+                                                                                    (order.coupon ?
+                                                                                    parseInt(couponDiscount) : 0); %>
+                                                                                    <p class="text-success">Total
+                                                                                        Discount: <%=
+                                                                                            totalDiscount.toFixed(0) %>
+                                                                                    </p>
+                                                                                    <!-- Show total amount -->
+                                                                                    <p class="fw-bold mt-3">Total
+                                                                                        Amount: <%= order.totalAmount %>
+                                                                                    </p>
+
+                                </ul>
+                                <!-- Show continue payment button for pending paymentStatus -->
+                                <% if (order.status==='Payment Pending' ) { %>
+                                    <!-- Continue Payment button for pending orders -->
+                                    <a href="/cart/checkout?orderId=<%= order._id %>" class="btn btn-primary">Retry
+                                        Payment</a>
+                                    <% } %>
+
+                                        <!-- Show cancel button for pending orders -->
+                                        <% if (order.status==='Pending' ) { %>
+                                            <form id="cancelForm_<%= order._id %>"
+                                                action="/profile/orders/cancel/<%= order._id %>" method="POST"
+                                                class="mt-3">
+
+
+                                                <div id="reasonDiv_<%= order._id %>" style="display: none;">
+                                                    <div class="mb-3">
+                                                        <label for="cancelReason_<%= order._id %>"
+                                                            class="form-label">Reason for
+                                                            cancellation:</label>
+                                                        <select class="form-select" id="cancelReason_<%= order._id %>"
+                                                            name="cancelReason" required>
+                                                            <option value="" selected disabled>Select a reason</option>
+                                                            <option value="Changed mind">Changed mind</option>
+                                                            <option value="Found better deal">Found better deal</option>
+                                                            <option value="Other">Other</option>
+                                                            <!-- Add more reasons if needed -->
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <button type="submit" class="btn btn-danger"
+                                                    onclick="confirmCancellation('<%= order._id %>')">Cancel
+                                                    Order</button>
+                                            </form>
+                                            <% } else if (order.status==='Delivered' && !order.returnRequested &&
+                                                !order.returnApproved ) { %>
+                                                <!-- Show return button for delivered orders -->
+                                                <form id="returnForm_<%= order._id %>"
+                                                    action="/profile/orders/return/<%= order._id %>" method="POST"
+                                                    class="mt-3">
+                                                    <div id="returnReasonDiv_<%= order._id %>" style="display: none;">
+                                                        <div class="mb-3">
+                                                            <label for="returnReason_<%= order._id %>"
+                                                                class="form-label">Reason
+                                                                for
+                                                                return:</label>
+                                                            <select class="form-select"
+                                                                id="returnReason_<%= order._id %>" name="returnReason"
+                                                                required>
+                                                                <option value="" selected disabled>Select a reason
+                                                                </option>
+                                                                <option value="Wrong item received">Wrong item received
+                                                                </option>
+                                                                <option value="Item damaged during shipping">Item
+                                                                    damaged during
+                                                                    shipping</option>
+                                                                <option value="Changed mind">Changed mind</option>
+                                                                <option value="Other">Other</option>
+                                                                <!-- Add more reasons if needed -->
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-danger"
+                                                        id="returnButton_<%= order._id %>"
+                                                        onclick="confirmReturn('<%= order._id %>')">Return
+                                                        Order</button>
+                                                </form>
+                                                <div class="pt-2">
+                                                    <!-- Add this inside the order card in your HTML -->
+                                                    <a href="/profile/orders/invoice/<%= order._id %>"
+                                                        class="btn btn-secondary">Download Invoice</a>
+                                                </div>
+                                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                        <% } %>
+                            <!-- Inside your EJS template -->
+
+                            <div class="pagination-container">
+                                <ul class="pagination">
+                                    <!-- Previous button -->
+                                    <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                                        <a class="page-link"
+                                            href="<%= currentPage > 1 ? `/profile/orders?page=${currentPage - 1}` : '#' %>">
+                                            Previous
+                                        </a>
+                                    </li>
+
+                                    <!-- Numbered pages -->
+                                    <% for (let i=1; i <=totalPages; i++) { %>
+                                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                            <a class="page-link" href="<%= `/profile/orders?page=${i}` %>">
+                                                <%= i %>
+                                            </a>
+                                        </li>
+                                        <% } %>
+
+                                            <!-- Next button -->
+                                            <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                                                <a class="page-link"
+                                                    href="<%= currentPage < totalPages ? `/profile/orders?page=${currentPage + 1}` : '#' %>">
+                                                    Next
+                                                </a>
+                                            </li>
+                                </ul>
+                            </div>
+
+
+
+
+    </div>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; Audio Booth. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function confirmCancellation(orderId) {
+            if (confirm('Are you sure you want to cancel this order?')) {
+                const reasonDiv = document.getElementById('reasonDiv_' + orderId);
+                reasonDiv.style.display = 'block';
+
+                const cancelButton = document.querySelector('#cancelForm_' + orderId + ' button[type="button"]');
+                cancelButton.disabled = true;
+
+                const reasonSelect = document.getElementById('cancelReason_' + orderId);
+                reasonSelect.addEventListener('change', function () {
+                    cancelButton.disabled = false;
+                    if (confirm('Are you sure you want to cancel this order?')) {
+                        const form = document.getElementById('cancelForm_' + orderId);
+                        form.submit(); // Submit the form when a reason is selected and confirmed
+                    }
+                });
+            }
+        }
+
+
+        function confirmReturn(orderId) {
+            if (confirm('Are you sure you want to return this order?')) {
+                const reasonDiv = document.getElementById('returnReasonDiv_' + orderId);
+                reasonDiv.style.display = 'block';
+
+                const returnButton = document.querySelector('#returnForm_' + orderId + ' button[type="button"]');
+                returnButton.disabled = true;
+
+                const reasonSelect = document.getElementById('returnReason_' + orderId);
+                reasonSelect.addEventListener('change', function () {
+                    returnButton.disabled = false;
+                    if (confirm('Are you sure you want to return this order?')) {
+                        const form = document.getElementById('returnForm_' + orderId);
+                        form.submit(); // Submit the form when a reason is selected and confirmed
+                    }
+                });
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const previousBtn = document.getElementById('previousBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            previousBtn.addEventListener('click', () => {
+                const currentPage = parseInt(previousBtn.getAttribute('data-current-page'));
+                if (currentPage > 1) {
+                    window.location.href = `/profile/orders?page=${currentPage - 1}`;
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                const currentPage = parseInt(nextBtn.getAttribute('data-current-page'));
+                const totalPages = parseInt(nextBtn.getAttribute('data-total-pages'));
+                if (currentPage < totalPages) {
+                    window.location.href = `/profile/orders?page=${currentPage + 1}`;
+                }
+            });
+        });
+
+    </script>
+
+
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
+</html>

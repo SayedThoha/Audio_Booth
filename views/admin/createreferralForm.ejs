@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%=title%>
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        .footer {
+            background-color: #343a40;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container-fluid">
+        <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+            <h3 style="color: whitesmoke; " class="mb-4">Create Referral Offer</h3>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2 form-container">
+                <h1 class="text-center">Create Referral Offer</h1>
+                <% if (message && message.length> 0) { %>
+                    <div class="flash-message alert alert-danger ">
+                        <%= message %>
+                    </div>
+                    <% } %>
+                        <form action="/admin/referral-offer/create" method="post" class="needs-validation" novalidate>
+                            <div class="form-group">
+                                <label for="referrerReward">Referrer Reward:</label>
+                                <input type="number" class="form-control" id="referrerReward" name="referrerReward"
+                                    required min="100" max="500">
+                                <div class="invalid-feedback">Please enter a valid referrer reward.</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="refereeReward">Referee Reward:</label>
+                                <input type="number" class="form-control" id="refereeReward" name="refereeReward"
+                                    required min="100" max="500">
+                                <div class="invalid-feedback">Please enter a valid referee reward.</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="startDate">Start Date:</label>
+                                <input type="date" class="form-control" id="startDate" name="startDate" required>
+                                <div class="invalid-feedback">Please select a start date.</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="endDate">End Date:</label>
+                                <input type="date" class="form-control" id="endDate" name="endDate" required>
+                                <div class="invalid-feedback">Please select an end date.</div>
+                            </div>
+                            <div class="p-2">
+                                <button type="submit" class="btn btn-primary btn-block">Create Offer</button>
+                            </div>
+                        </form>
+
+                        <div class="p-2">
+                            <a href="/admin/referral-offer" class="btn btn-primary">Back</a>
+                        </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <!-- Add footer content and links here -->
+            &copy; 2024 Audio Booth. All rights reserved.
+        </div>
+    </footer>
+    <script>
+        // Client-side validation using HTML5 attributes
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
+</html>

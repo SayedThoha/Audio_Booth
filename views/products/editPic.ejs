@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product Picture</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        .img-thumbnail {
+            max-width: 200px;
+            height: auto;
+        }
+
+        .image-container {
+            margin-bottom: 20px;
+        }
+
+        .btn-container {
+            margin-top: 20px;
+        }
+
+
+        .flash-message {
+            margin-top: 20px;
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <div class="container-fluid">
+        <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+            <h3 style="color: whitesmoke;" class="mb-4">Audio Booth</h3>
+        </nav>
+    </div>
+    <div class="container">
+        <h2 class="my-4">Edit Product Picture</h2>
+        <% if (message && message.length> 0) { %>
+            <div class="flash-message alert alert-primary ">
+                <%= message %>
+            </div>
+            <% } %>
+                <div class="p-2">
+                    <a href="/admin/products" class="btn btn-primary">Back</a>
+                </div>
+                <!-- Display existing images -->
+                <div class="existing-images">
+                    <h3>Existing Images</h3>
+                    <div class="row">
+                        <% product.images.forEach((image, index)=> { %>
+                            <div class="col-md-4 image-container">
+                                <div class="thumbnail">
+                                    <img src="<%= image.url %>" alt="Product Image <%= index + 1 %>"
+                                        class="img-thumbnail">
+                                    <!--  remove each existing image -->
+
+                                    <form
+                                        action="/admin/products/edit-picture/remove-image/<%= index %>/<%= product._id %>"
+                                        method="POST">
+                                        <button type="submit" class="btn btn-danger mt-2">Remove</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <% }); %>
+                    </div>
+                </div>
+
+
+                <!-- Form for adding new images -->
+                <div class="add-image-form">
+                    <form id="addImageForm" action="/admin/products/edit-picture/add-image/<%= product._id %>"
+                        method="POST" enctype="multipart/form-data">
+                        <h3>Add New Image</h3>
+                        <div class="mb-3">
+                            <input type="file" name="images" id="imageUpload" class="form-control-file">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </form>
+                </div>
+    </div>
+
+
+    <footer class="footer">
+        <div class="container-fluid">
+            <!-- Add footer content and links here -->
+            &copy; 2024 Audio Booth. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('addImageForm').addEventListener('submit', function (event) {
+            const fileInput = document.getElementById('imageUpload');
+            const existingImageCount = document.querySelectorAll('.existing-images .thumbnail').length;
+            if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                alert('Please select an image file.');
+                event.preventDefault(); // Prevent form submission
+            } else if (existingImageCount + fileInput.files.length > 3) {
+                alert('Maximum total of 3 images allowed (including existing images).');
+                event.preventDefault(); // Prevent form submission
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
