@@ -5,7 +5,8 @@ const connect = mongoose.connect(process.env.atlasUri)
 connect.then(() => {
     console.log("database connected")
 })
-    .catch(() => {
+    .catch((error) => {
+        console.log(error)
         console.log("database not connected")
     })
 
