@@ -5,14 +5,14 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const { v4: uuidv4 } = require('uuid');
-const session = require('express-session')
+// const { v4: uuidv4 } = require('uuid');
+// const session = require('express-session')
 const flash = require('connect-flash');
 const nocache = require("nocache");
-const passport = require('passport'); 
-const multer  = require('multer')
+// const passport = require('passport'); 
+// const multer  = require('multer')
 
-const sharp = require('sharp');
+// const sharp = require('sharp');
 var indexRouter = require('./routes/index');
 var adminRouter = require('./routes/admin');
 
