@@ -270,7 +270,7 @@
                             <hr class="my-3">
 
                             <ul class="nav flex-column mb-auto">
-                               
+
                                 <li class="nav-item">
                                     <a class="nav-link d-flex align-items-center gap-2" href="/admin/logout">
                                         <svg class="bi">
@@ -290,7 +290,7 @@
                         <h1 class="h2">Product </h1>
                         <div class="btn-toolbar mb-2 mb-md-0">
                             <div class="btn-group me-2">
-                                
+
                             </div>
 
 
@@ -299,7 +299,7 @@
                         </div>
                     </div>
 
-                    
+
 
                     <h2>Product Management</h2>
                     <% if (successMessage&&successMessage.length>0) { %>
@@ -328,8 +328,8 @@
                                         <% products.forEach(product=> { %>
                                             <div class="product-box">
                                                 <div class="product">
-                                                    <img src="<%= product.images[0].url %>" alt="<%= product.name %>"
-                                                        class="thumbnail">
+                                                    <img src="<%= product.images.length > 0 ? product.images[0].url : '/placeholder-image.jpg'%>"
+                                                        alt="<%= product.name %>" class="thumbnail">
                                                     <div class="product-details">
                                                         <h2>
                                                             <%= product.name %>
@@ -337,11 +337,11 @@
                                                         <p>
                                                             <%= product.description %>
                                                         </p>
-                                                        <p>Price: ₹<%= product.price %>
+                                                        <p>Actual Price: ₹<%= product.actualPrice %>
                                                         </p>
                                                         <p>Discount:₹<%= product.discount%>
                                                         </p>
-                                                        <p>Actual price:₹<%= product.actualPrice%>
+                                                        <p>offer price:₹<%= product.price%>
                                                         </p>
                                                         <p>Stock Quantity: <%= product.stockQuantity %>
                                                         </p>
@@ -353,11 +353,12 @@
                                                         </p>
                                                     </div>
                                                 </div>
-                                                
-                                                   
-                                                 
+
+
+
                                                 <div class="actions">
-                                                    <a href="/admin/products/edit-picture/<%= product._id %>" class="btn btn-secondary">Edit-Pic</a>
+                                                    <a href="/admin/products/edit-picture/<%= product._id %>"
+                                                        class="btn btn-secondary">Edit-Pic</a>
                                                     <a href="/admin/products/edit/<%= product._id %>"
                                                         class="btn btn-primary">Edit</a>
                                                     <form action="/admin/products/delete/<%= product._id %>"
@@ -384,20 +385,22 @@
                                     </div>
 
                                     <div class="pagination p-3">
-                                        <% if (currentPage > 1) { %>
-                                            <a href="/admin/products?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="page-number btn btn-primary">Previous</a>
-                                        <% } %>
-                                        
-                                        <% if (currentPage < totalPages) { %>
-                                            <a href="/admin/products?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="page-number btn btn-primary">Next</a>
-                                        <% } %>
+                                        <% if (currentPage> 1) { %>
+                                            <a href="/admin/products?page=<%= currentPage - 1 %>&limit=<%= limit %>"
+                                                class="page-number btn btn-primary">Previous</a>
+                                            <% } %>
+
+                                                <% if (currentPage < totalPages) { %>
+                                                    <a href="/admin/products?page=<%= currentPage + 1 %>&limit=<%= limit %>"
+                                                        class="page-number btn btn-primary">Next</a>
+                                                    <% } %>
                                     </div>
-                                    
-                                    
-                                    
+
+
+
 
                 </main>
             </div>
         </div>
-        
+
         <%- include('../partials/adminFooter')%>

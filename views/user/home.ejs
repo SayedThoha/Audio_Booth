@@ -194,12 +194,18 @@
                                                     <p class="card-text">
                                                         <%= product.description %>
                                                     </p>
-                                                    <p class="card-text">Price: <%= product.price %>
+                                                    <p class="card-text">
+                                                        <%= product.brand %>
+                                                    </p>
+                                                    <p class="card-text" style="color: brown;">Offer Price: <%=
+                                                            product.price %>
+                                                    </p>
+                                                    <p class="card-text"">Actual Price: <%= product.actualPrice %>
                                                     </p>
 
                                                     <!-- Add more product details here -->
-                                                    <a href="/products/details/<%= product._id %>"
-                                                        class="btn btn-primary">View Details</a>
+                                                    <!-- <a href=" /products/details/<%=product._id %>"
+                                                        class="btn btn-primary">View Details</a> -->
                                                 </div>
                                 </div>
                             </div>

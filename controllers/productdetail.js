@@ -2,7 +2,7 @@ const Category = require('../models/categoryModel');
 const Product = require('../models/productModel');
 
 
-// Controller method to render product details
+// Controller render product details
 const getProductDetails = async (req, res) => {
     try {
         // Retrieve the product ID from the request parameters
