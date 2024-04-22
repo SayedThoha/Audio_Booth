@@ -618,7 +618,7 @@ const loadEdituser = async (req, res) => {
         const message = req.flash('message');
 
         // Render the page and pass user data 
-        res.render('./user/edituser', { title: 'Edit profile', user, message: message });
+        res.render('./user/editUser', { title: 'Edit profile', user, message: message });
 
     } catch (error) {
         console.log(error.message)
