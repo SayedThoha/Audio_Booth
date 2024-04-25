@@ -23,6 +23,19 @@
             box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
         }
 
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-right: 1px solid #ddd;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+        }
+
         .form-group label {
             font-weight: bold;
         }
@@ -32,7 +45,24 @@
 
 <body>
 
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <h3>Audio Booth</h3>
+        <ul>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li><a href="/admin/category">Category</a></li>
+            <li><a href="/admin/products">Products</a></li>
+            <li><a href="/admin/customers">Customers</a></li>
+            <li><a href="/admin/orders">Orders</a></li>
+            <li><a href="/admin/offer">Offers</a></li>
+            <li><a href="/admin/coupons">Coupons</a></li>
+
+        </ul>
+    </div>
+
+
     <div class="container">
+
         <h1 class="mb-4">Create Coupon</h1>
         <div class="p-2">
             <a href="/admin/coupons" class="btn btn-primary">Back</a>
@@ -70,7 +100,8 @@
                 <label for="minimumPurchaseAmount">Minimum Purchase Amount</label>
                 <input type="number" class="form-control" id="minimumPurchaseAmount" name="minimumPurchaseAmount"
                     min="500" max="5000" required>
-                <div class="invalid-feedback">Please enter a valid minimum purchase amount between 500 and 5000.</div>
+                <div class="invalid-feedback">Please enter a valid minimum purchase amount between 500 and 5000.
+                </div>
             </div>
             <div id="maximumDiscountField" class="form-group" style="display: none;">
                 <label for="maximumDiscountAmount">Maximum Discount Amount</label>
@@ -89,6 +120,7 @@
             </div>
         </form>
     </div>
+
 
 </body>
 <script>
@@ -134,3 +166,4 @@
     crossorigin="anonymous"></script>
 
 </html>
+

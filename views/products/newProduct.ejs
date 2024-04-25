@@ -93,15 +93,44 @@
             margin-right: 10px;
             margin-bottom: 10px;
         }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-right: 1px solid #ddd;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+        }
     </style>
 </head>
 
 <body>
+    <!-- Sidebar -->
+    <div class="sidebar pt-5">
+        <h3>Audio Booth</h3>
+        <ul>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li><a href="/admin/category">Category</a></li>
+            <li><a href="/admin/products">Products</a></li>
+            <li><a href="/admin/customers">Customers</a></li>
+            <li><a href="/admin/orders">Orders</a></li>
+            <li><a href="/admin/offer">Offers</a></li>
+            <li><a href="/admin/coupons">Coupons</a></li>
+
+        </ul>
+    </div>
     <div class="container-fluid">
         <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
             <h3 style="color: whitesmoke;" class="mb-4">Audio Booth</h3>
         </nav>
     </div>
+    
+
     <% if (successMessage&&successMessage.length>0) { %>
         <div class="container-fluid">
             <div class="alert alert-success" role="alert">

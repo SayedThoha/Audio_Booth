@@ -37,7 +37,8 @@ const renderWallet = async (req, res) => {
         
         const endIndex = Math.min(startIndex + pageSize, totalCount);
         
-        const transactions = wallet.transactions.slice(startIndex, endIndex);
+        let transactions = wallet.transactions.slice().reverse().slice(startIndex, endIndex);
+        
         
         
         const message = req.flash('message');
